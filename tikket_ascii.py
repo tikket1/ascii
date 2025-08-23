@@ -1,7 +1,18 @@
 #!/usr/bin/env python3
 """
 ASCII Art Engine - Image to ASCII converter with animation and secret cipher
-A fun project combining image processing, ASCII art, and cryptography!
+
+████████ ██ ██   ██ ██   ██ ███████ ████████ 
+   ██    ██ ██  ██  ██  ██  ██         ██    
+   ██    ██ █████   █████   █████      ██    
+   ██    ██ ██  ██  ██  ██  ██         ██    
+   ██    ██ ██   ██ ██   ██ ███████    ██    
+
+Core ASCII conversion engine. Started as a weekend project but got way
+too carried away with all the features. The steganography stuff was
+just me being extra - figured why not hide messages in the art?
+
+Probably over-engineered this but it was fun to build.
 """
 
 import os
@@ -24,16 +35,17 @@ class ASCIIConverter:
     """Converts images to ASCII art with different character sets and styles"""
     
     # Different character sets for various ASCII art styles
+    # Spent way too much time tweaking these to get the right "feel"
     CHAR_SETS = {
         'detailed': '@%#*+=-:. ',
         'simple': '█▉▊▋▌▍▎▏ ',
         'classic': '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`\'. ',
-        'blocks': '██▓▒░  ',
+        'blocks': '██▓▒░  ',  # My personal favorite
         'minimal': '■□ ',
         'hifi': '@@@@@@@@@###########*********+++++++++=========-----:::::.......         ',
         'photorealistic': '█▉▊▋▌▍▎▏▎▍▌▋▊▉█▉▊▋▌▍▎▏ ░░▒▒▓▓██',
         'dense': '██████▓▓▓▓▓▒▒▒▒▒░░░░░      ',
-        'ultra': '@@@###***+++===---:::...   '
+        'ultra': '@@@###***+++===---:::...   '  # Goes a bit overboard but looks cool
     }
     
     def __init__(self, char_set: str = 'detailed', width: int = 80):

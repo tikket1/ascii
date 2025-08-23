@@ -1,6 +1,16 @@
 #!/usr/bin/env python3
 """
 Flask Web GUI for Tikket ASCII Art Generator
+
+████████ ██ ██   ██ ██   ██ ███████ ████████ 
+   ██    ██ ██  ██  ██  ██  ██         ██    
+   ██    ██ █████   █████   █████      ██    
+   ██    ██ ██  ██  ██  ██  ██         ██    
+   ██    ██ ██   ██ ██   ██ ███████    ██    
+
+A fun little side project I've been working on for converting images
+to ASCII art. Started this because I was bored one weekend and wanted
+to mess around with image processing in Python.
 """
 
 import os
@@ -11,10 +21,10 @@ from werkzeug.utils import secure_filename
 from tikket_ascii import ASCIIConverter, SecretCipher
 
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB should be plenty for most images
 app.config['UPLOAD_FOLDER'] = tempfile.mkdtemp()
 
-# Allowed file extensions
+# TODO: Maybe add support for more exotic formats later?
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff', 'webp'}
 
 def allowed_file(filename):
@@ -32,10 +42,11 @@ def clean_ascii_for_external(ascii_lines):
     max_width = 0
     
     # First pass: clean lines and find max width
+    # This was a pain to figure out - Discord is super picky about formatting
     for line in ascii_lines:
-        # Remove ANSI codes
+        # Strip out those annoying ANSI color codes
         clean_line = remove_ansi_codes(line)
-        # Convert light shade back to spaces for copying
+        # Convert light shade back to spaces for copying (learned this the hard way)
         clean_line = clean_line.replace('░', ' ')
         # Strip trailing spaces but keep the line structure
         clean_line = clean_line.rstrip()
