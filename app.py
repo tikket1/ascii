@@ -292,7 +292,12 @@ def get_styles():
     return jsonify(list(ASCIIConverter.CHAR_SETS.keys()))
 
 if __name__ == '__main__':
-    app.run(debug=True, host='127.0.0.1', port=5001)
+    # Get port from environment (for production) or default to 5001 (for local dev)
+    port = int(os.environ.get('PORT', 5001))
+    host = '0.0.0.0' if 'PORT' in os.environ else '127.0.0.1'
+    debug = 'PORT' not in os.environ  # Only debug locally
+    
+    app.run(debug=debug, host=host, port=port)
 
-# For Vercel
-app = app
+# For WSGI servers (production)
+application = app
