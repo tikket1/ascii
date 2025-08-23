@@ -16,20 +16,76 @@ to mess around with image processing in Python.
 import os
 import tempfile
 import re
+import magic
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
+from PIL import Image
 from tikket_ascii import ASCIIConverter, SecretCipher
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB should be plenty for most images
 app.config['UPLOAD_FOLDER'] = tempfile.mkdtemp()
 
+# Security headers
+@app.after_request
+def add_security_headers(response):
+    # Content Security Policy - restrict script sources
+    response.headers['Content-Security-Policy'] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline'; "  # Needed for inline scripts
+        "style-src 'self' 'unsafe-inline' fonts.googleapis.com; "
+        "font-src 'self' fonts.gstatic.com; "
+        "img-src 'self' data:; "
+        "connect-src 'self'; "
+        "frame-ancestors 'none';"
+    )
+    
+    # Additional security headers
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
+    
+    return response
+
 # TODO: Maybe add support for more exotic formats later?
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff', 'webp'}
 
 def allowed_file(filename):
+    """Check if file extension is allowed"""
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def validate_image_file(filepath):
+    """Validate uploaded file is actually a legitimate image"""
+    try:
+        # Check MIME type using python-magic
+        mime = magic.from_file(filepath, mime=True)
+        if not mime.startswith('image/'):
+            return False, f"File is not a valid image (detected: {mime})"
+        
+        # Try to open with PIL to verify it's a real image
+        with Image.open(filepath) as img:
+            # Verify image format matches extension
+            if img.format.lower() not in ['png', 'jpeg', 'jpg', 'gif', 'bmp', 'tiff', 'webp']:
+                return False, f"Unsupported image format: {img.format}"
+            
+            # Check for reasonable dimensions (prevent memory bombs)
+            width, height = img.size
+            if width > 10000 or height > 10000:
+                return False, f"Image too large: {width}x{height} (max 10000x10000)"
+            
+            if width * height > 50000000:  # 50MP limit
+                return False, "Image has too many pixels (max 50 megapixels)"
+            
+            # Load a small portion to verify it's not corrupted
+            img.load()
+            
+        return True, "Valid image"
+        
+    except Exception as e:
+        return False, f"Invalid image file: {str(e)}"
 
 def remove_ansi_codes(text):
     """Remove ANSI color codes from text"""
@@ -208,19 +264,52 @@ def convert_image():
         if not allowed_file(file.filename):
             return jsonify({'error': 'Invalid file type. Please use PNG, JPG, JPEG, GIF, BMP, TIFF, or WebP'}), 400
         
-        # Save uploaded file
+        # Save uploaded file securely
         filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        # Generate unique filename to prevent conflicts and path traversal
+        import uuid
+        safe_filename = f"{uuid.uuid4().hex}_{filename}"
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
         file.save(filepath)
         
-        # Get form parameters
-        width = int(request.form.get('width', 80))
+        # Validate the uploaded file is actually an image
+        is_valid, validation_msg = validate_image_file(filepath)
+        if not is_valid:
+            os.remove(filepath)  # Clean up invalid file
+            return jsonify({'error': f'Security validation failed: {validation_msg}'}), 400
+        
+        # Validate and sanitize form parameters
+        try:
+            width = int(request.form.get('width', 80))
+            if not 20 <= width <= 400:
+                width = max(20, min(400, width))  # Clamp to valid range
+        except (ValueError, TypeError):
+            width = 80
+            
         style = request.form.get('style', 'detailed')
+        # Validate style is in allowed set
+        allowed_styles = {'detailed', 'simple', 'classic', 'blocks', 'minimal', 'hifi', 'photorealistic', 'dense', 'ultra'}
+        if style not in allowed_styles:
+            style = 'detailed'
+            
         invert = request.form.get('invert') == 'on'
         hifi = request.form.get('hifi') == 'on'
         color = request.form.get('color') == 'on'
+        
         color_style = request.form.get('color_style', 'natural')
+        allowed_color_styles = {'natural', 'vivid', 'ocean', 'sunset'}
+        if color_style not in allowed_color_styles:
+            color_style = 'natural'
+            
+        # Sanitize hidden message input
         hide_message = request.form.get('hide_message', '').strip()
+        if hide_message:
+            # Limit message length and remove potentially dangerous characters
+            hide_message = hide_message[:200]  # Max 200 chars
+            # Only allow alphanumeric, spaces, and basic punctuation
+            import string
+            allowed_chars = string.ascii_letters + string.digits + ' .,!?-_'
+            hide_message = ''.join(c for c in hide_message if c in allowed_chars)
         
         # Convert image to ASCII
         converter = ASCIIConverter(style, width)
@@ -270,21 +359,50 @@ def convert_image():
 def reveal_message():
     """Reveal hidden message from ASCII art"""
     try:
+        # Validate input
+        if not request.json:
+            return jsonify({'error': 'Invalid JSON data'}), 400
+            
         ascii_lines = request.json.get('ascii_lines', [])
-        key = int(request.json.get('key', 5))
+        if not isinstance(ascii_lines, list) or len(ascii_lines) > 1000:
+            return jsonify({'error': 'Invalid ASCII data (max 1000 lines)'}), 400
+            
+        try:
+            key = int(request.json.get('key', 5))
+            if not 1 <= key <= 25:  # Valid Caesar cipher range
+                key = 5
+        except (ValueError, TypeError):
+            key = 5
         
         if not ascii_lines:
             return jsonify({'error': 'No ASCII art provided'}), 400
         
-        hidden_message = SecretCipher.reveal_message(ascii_lines, key)
+        # Sanitize ASCII lines (remove any potentially dangerous content)
+        sanitized_lines = []
+        for line in ascii_lines[:1000]:  # Limit number of lines
+            if isinstance(line, str):
+                # Keep only printable ASCII characters
+                clean_line = ''.join(c for c in line[:500] if ord(c) >= 32 and ord(c) <= 126 or c == '\n')
+                sanitized_lines.append(clean_line)
+        
+        hidden_message = SecretCipher.reveal_message(sanitized_lines, key)
+        
+        # Sanitize output message
+        if hidden_message:
+            # Remove any potential XSS characters and limit length
+            import html
+            clean_message = html.escape(hidden_message[:500])
+        else:
+            clean_message = 'No hidden message found'
         
         return jsonify({
             'success': True,
-            'message': hidden_message if hidden_message else 'No hidden message found'
+            'message': clean_message
         })
         
     except Exception as e:
-        return jsonify({'error': f'Reveal failed: {str(e)}'}), 500
+        # Don't expose internal error details
+        return jsonify({'error': 'Message reveal failed'}), 500
 
 @app.route('/styles')
 def get_styles():
