@@ -1,41 +1,80 @@
-# Tikket ASCII
+# ascii-art-mcp
 
-Convert images to high-fidelity colored ASCII art with animation and cipher features.
+MCP server for converting images to ASCII art. Two modes — **photo** and **logo** — with smart defaults for each.
 
-## Quick Start
-
-```bash
-./setup.sh
-source venv/bin/activate
-python tikket_ascii.py your_image.jpg --color --width 120
-```
-
-## Features
-
-- **High-fidelity ASCII conversion** with realistic color mapping
-- **Multiple character sets** (standard, detailed, blocks, shading)
-- **Variable resolution** (40-200+ character widths)
-- **Animation support** for moving ASCII art
-- **Secret cipher** for text encryption
-- **Advanced image processing** with shadow enhancement
-
-## Usage Examples
+## Install
 
 ```bash
-# Basic ASCII (no color)
-python tikket_ascii.py image.jpg
+# With uvx (recommended)
+uvx ascii-art-mcp
 
-# Colored high-resolution
-python tikket_ascii.py image.jpg --color --width 160
-
-# Different character set
-python tikket_ascii.py image.jpg --color --charset detailed
-
-# Encrypt text
-python tikket_ascii.py --cipher "secret message" --shift 5
+# Or pip
+pip install ascii-art-mcp
 ```
 
-## Requirements
+For enhanced photo processing (adaptive histogram equalization):
 
-- Python 3.7+
-- PIL/Pillow, NumPy, SciPy, scikit-image (auto-installed by setup.sh)
+```bash
+pip install ascii-art-mcp[hifi]
+```
+
+## Usage with Claude Code
+
+Add to your Claude Code settings:
+
+```json
+{
+  "mcpServers": {
+    "ascii-art": {
+      "command": "uvx",
+      "args": ["ascii-art-mcp"]
+    }
+  }
+}
+```
+
+Then ask Claude to convert images:
+
+> "Convert this screenshot to ASCII art in logo mode"
+> "Turn my profile photo into colored ASCII art"
+
+## Tools
+
+### `convert_image`
+
+Convert an image to ASCII art.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `image_path` | string | yes | — | Path to image file |
+| `mode` | string | yes | — | `"photo"` or `"logo"` |
+| `width` | int | no | 80 | Output width (20-200 chars) |
+| `charset` | string | no | auto | Character set (run `list_charsets`) |
+| `color` | bool | no | false | ANSI 256-color output |
+| `color_style` | string | no | natural | Palette: natural, vivid, ocean, sunset |
+| `invert` | bool | no | auto | Flip brightness mapping |
+
+**Photo mode** — optimized for photographs: hi-fi processing with shadow lifting, sharpening, gamma correction. Fills empty space with `░` for visibility in terminals/chat.
+
+**Logo mode** — optimized for logos, icons, and text: clean spaces (no `░` fill), auto-trims whitespace borders, auto-inverts light backgrounds, alpha-aware compositing against black.
+
+### `list_charsets`
+
+Returns available character sets with descriptions and recommendations.
+
+## Character Sets
+
+| Name | Levels | Best for | Description |
+|------|--------|----------|-------------|
+| `detailed` | 10 | both | ASCII gradient, good all-rounder |
+| `classic` | 70 | photo | Maximum tonal range |
+| `simple` | 9 | photo | Unicode block shading |
+| `hifi` | ~9 | photo | Repeated chars for fine gradation |
+| `minimal` | 3 | logo | Binary black/white, crispest edges |
+| `blocks` | ~4 | logo | Coarse block shading |
+| `dense` | ~4 | logo | Heavy block shading |
+| `ultra` | ~9 | both | Balanced ASCII gradation |
+
+## License
+
+MIT

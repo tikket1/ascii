@@ -156,3 +156,8 @@ Temporary Items
 # Temporary files
 *.tmp
 *.temp
+
+# Old project directories
+FUNr/venv/
+FUNr/ascii_env/
+FUNr/__pycache__/
