@@ -1,12 +1,20 @@
 # ascii-art-mcp
 
-MCP server for converting images to ASCII art. Two modes — **photo** and **logo** — with smart defaults for each.
+MCP server for converting images to ASCII art.
 
-**Photo mode** — hi-fi color, 160 chars wide, `classic` charset (70 tonal levels):
+![Photo mode — NASA astronaut rendered as hi-fi colored ASCII art](ascii_preview.png)
 
-![Photo mode — NASA astronaut rendered as colored ASCII art](ascii_preview.png)
+> 200 chars wide, `classic` charset (70 tonal levels), hi-fi color — every character is a pixel.
 
-**Logo mode** — clean spaces, auto-trim, auto-invert:
+Two modes — **photo** and **logo** — with smart defaults for each.
+
+| | Photo | Logo |
+|---|---|---|
+| **Processing** | Hi-fi: sharpening, gamma, shadow lifting | Standard contrast |
+| **Background** | `░` fill for visibility | Clean spaces |
+| **Trimming** | None | Auto-trims whitespace borders |
+| **Invert** | Off | Auto-detects light backgrounds |
+| **Alpha** | Composites on white | Composites on black |
 
 ![Logo mode — horse silhouette as ASCII art](ascii_logo_preview.png)
 
