@@ -175,4 +175,4 @@ docs/
 *.png
 *.jpg
 *.jpeg
-!images/
+images/

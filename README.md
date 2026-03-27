@@ -2,7 +2,7 @@
 
 MCP server for converting images to ASCII art.
 
-![Photo mode — NASA astronaut rendered as hi-fi colored ASCII art](images/ascii_preview.png)
+![Photo mode — NASA astronaut rendered as hi-fi colored ASCII art](https://github.com/tikket1/ascii/releases/download/v0.1.0-images/ascii_preview.png)
 
 > 200 chars wide, `classic` charset (70 tonal levels), hi-fi color — every character is a pixel.
 
@@ -16,7 +16,7 @@ Two modes — **photo** and **logo** — with smart defaults for each.
 | **Invert** | Off | Auto-detects light backgrounds |
 | **Alpha** | Composites on white | Composites on black |
 
-![Logo mode — horse silhouette as ASCII art](images/ascii_logo_preview.png)
+![Logo mode — horse silhouette as ASCII art](https://github.com/tikket1/ascii/releases/download/v0.1.0-images/ascii_logo_preview.png)
 
 ### How Logo Mode Works
 
@@ -24,7 +24,7 @@ Logo mode is designed for images with a clear subject on a uniform background �
 
 Here's a black-and-white "ASCII_MCP" text image run through **logo mode**:
 
-![Logo mode — ASCII_MCP text](images/logo_example.png)
+![Logo mode — ASCII_MCP text](https://github.com/tikket1/ascii/releases/download/v0.1.0-images/logo_example.png)
 
 What logo mode does automatically:
 1. **Detects the light background** by sampling the corners of the image
@@ -34,7 +34,7 @@ What logo mode does automatically:
 
 Compare with the same image in **photo mode** (wrong mode for this):
 
-![Photo mode on a logo — ░ fill makes it muddy](images/logo_photo_mode.png)
+![Photo mode on a logo — ░ fill makes it muddy](https://github.com/tikket1/ascii/releases/download/v0.1.0-images/logo_photo_mode.png)
 
 Photo mode fills every empty pixel with `░`, which destroys the negative space that defines the logo. That's why mode matters.
 
@@ -99,49 +99,49 @@ Each charset maps pixel brightness to a different set of characters. The number 
 
 `@%#*+=-:. ` — balanced between detail and readability. Works for both photos and logos.
 
-![detailed charset](images/charset_detailed.png)
+![detailed charset](https://github.com/tikket1/ascii/releases/download/v0.1.0-images/charset_detailed.png)
 
 ### `classic` — 70 levels, maximum tonal range
 
 `$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,"^'. ` — the most detailed charset. Every subtle gradient gets its own character. Best for photos where you want maximum fidelity.
 
-![classic charset](images/charset_classic.png)
+![classic charset](https://github.com/tikket1/ascii/releases/download/v0.1.0-images/charset_classic.png)
 
 ### `simple` — 9 levels, Unicode block shading
 
 `█▉▊▋▌▍▎▏ ` — smooth, print-like appearance using Unicode block elements. Looks like a halftone print.
 
-![simple charset](images/charset_simple.png)
+![simple charset](https://github.com/tikket1/ascii/releases/download/v0.1.0-images/charset_simple.png)
 
 ### `blocks` — ~4 levels, coarse block shading
 
 `██▓▒░ ` — bold, high-contrast look. Good for logos and silhouettes where you want punch over detail.
 
-![blocks charset](images/charset_blocks.png)
+![blocks charset](https://github.com/tikket1/ascii/releases/download/v0.1.0-images/charset_blocks.png)
 
 ### `minimal` — 3 levels, binary
 
 `■□ ` — just solid, outline, and empty. Crispest edges, no gradients. Best for logos and icons.
 
-![minimal charset](images/charset_minimal.png)
+![minimal charset](https://github.com/tikket1/ascii/releases/download/v0.1.0-images/charset_minimal.png)
 
 ### `hifi` — ~9 levels, fine gradation
 
 Repeated characters (`@@@###***+++===---:::...`) create smooth tonal bands. Good for photos.
 
-![hifi charset](images/charset_hifi.png)
+![hifi charset](https://github.com/tikket1/ascii/releases/download/v0.1.0-images/charset_hifi.png)
 
 ### `dense` — ~4 levels, heavy block shading
 
 Heavy Unicode blocks — bold, poster-like look.
 
-![dense charset](images/charset_dense.png)
+![dense charset](https://github.com/tikket1/ascii/releases/download/v0.1.0-images/charset_dense.png)
 
 ### `ultra` — ~9 levels, balanced ASCII
 
 Repeated ASCII characters (`@@@###***+++===---:::...`) — like `hifi` but pure ASCII, no Unicode.
 
-![ultra charset](images/charset_ultra.png)
+![ultra charset](https://github.com/tikket1/ascii/releases/download/v0.1.0-images/charset_ultra.png)
 
 ## Choosing a Width
 
@@ -155,16 +155,16 @@ The `width` parameter controls how many characters wide the output is. More char
 | 200 | Maximum detail | Near-photographic |
 
 ### Width 40
-![width 40](images/width_40.png)
+![width 40](https://github.com/tikket1/ascii/releases/download/v0.1.0-images/width_40.png)
 
 ### Width 80 (default)
-![width 80](images/width_80.png)
+![width 80](https://github.com/tikket1/ascii/releases/download/v0.1.0-images/width_80.png)
 
 ### Width 120
-![width 120](images/width_120.png)
+![width 120](https://github.com/tikket1/ascii/releases/download/v0.1.0-images/width_120.png)
 
 ### Width 200
-![width 200](images/width_200.png)
+![width 200](https://github.com/tikket1/ascii/releases/download/v0.1.0-images/width_200.png)
 
 **Rule of thumb:** match `width` to where the output will be displayed. Terminal? Use 80-120. Discord message? Use 40-60. Saving to a file? Go big with 160-200.
 
