@@ -18,6 +18,26 @@ Two modes — **photo** and **logo** — with smart defaults for each.
 
 ![Logo mode — horse silhouette as ASCII art](ascii_logo_preview.png)
 
+### How Logo Mode Works
+
+Logo mode is designed for images with a clear subject on a uniform background — logos, text, icons, silhouettes.
+
+Here's a black-and-white "ASCII_MCP" text image run through **logo mode**:
+
+![Logo mode — ASCII_MCP text](logo_example.png)
+
+What logo mode does automatically:
+1. **Detects the light background** by sampling the corners of the image
+2. **Auto-inverts** so the dark text becomes dense characters (`@%#*`) and the white background becomes empty space
+3. **Trims whitespace** borders so the output is tight around the subject
+4. **Uses real spaces** instead of `░` fill, keeping the background clean
+
+Compare with the same image in **photo mode** (wrong mode for this):
+
+![Photo mode on a logo — ░ fill makes it muddy](logo_photo_mode.png)
+
+Photo mode fills every empty pixel with `░`, which destroys the negative space that defines the logo. That's why mode matters.
+
 ## Quick Start
 
 Works out of the box as an MCP server — install it, add it to your config, done.
