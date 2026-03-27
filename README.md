@@ -73,16 +73,80 @@ Returns available character sets with descriptions and recommendations.
 
 ## Character Sets
 
-| Name | Levels | Best for | Description |
-|------|--------|----------|-------------|
-| `detailed` | 10 | both | ASCII gradient, good all-rounder |
-| `classic` | 70 | photo | Maximum tonal range |
-| `simple` | 9 | photo | Unicode block shading |
-| `hifi` | ~9 | photo | Repeated chars for fine gradation |
-| `minimal` | 3 | logo | Binary black/white, crispest edges |
-| `blocks` | ~4 | logo | Coarse block shading |
-| `dense` | ~4 | logo | Heavy block shading |
-| `ultra` | ~9 | both | Balanced ASCII gradation |
+Each charset maps pixel brightness to a different set of characters. The number of unique characters determines how much tonal detail you get.
+
+### `detailed` — 10 levels, good all-rounder (default)
+
+`@%#*+=-:. ` — balanced between detail and readability. Works for both photos and logos.
+
+![detailed charset](charset_detailed.png)
+
+### `classic` — 70 levels, maximum tonal range
+
+`$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,"^'. ` — the most detailed charset. Every subtle gradient gets its own character. Best for photos where you want maximum fidelity.
+
+![classic charset](charset_classic.png)
+
+### `simple` — 9 levels, Unicode block shading
+
+`█▉▊▋▌▍▎▏ ` — smooth, print-like appearance using Unicode block elements. Looks like a halftone print.
+
+![simple charset](charset_simple.png)
+
+### `blocks` — ~4 levels, coarse block shading
+
+`██▓▒░ ` — bold, high-contrast look. Good for logos and silhouettes where you want punch over detail.
+
+![blocks charset](charset_blocks.png)
+
+### `minimal` — 3 levels, binary
+
+`■□ ` — just solid, outline, and empty. Crispest edges, no gradients. Best for logos and icons.
+
+![minimal charset](charset_minimal.png)
+
+### `hifi` — ~9 levels, fine gradation
+
+Repeated characters (`@@@###***+++===---:::...`) create smooth tonal bands. Good for photos.
+
+![hifi charset](charset_hifi.png)
+
+### `dense` — ~4 levels, heavy block shading
+
+Heavy Unicode blocks — bold, poster-like look.
+
+![dense charset](charset_dense.png)
+
+### `ultra` — ~9 levels, balanced ASCII
+
+Repeated ASCII characters (`@@@###***+++===---:::...`) — like `hifi` but pure ASCII, no Unicode.
+
+![ultra charset](charset_ultra.png)
+
+## Choosing a Width
+
+The `width` parameter controls how many characters wide the output is. More characters = more detail, but also more text.
+
+| Width | Best for | Detail |
+|-------|----------|--------|
+| 40 | Thumbnails, chat messages | Blocky, shape only |
+| 80 | Terminal default, Discord | Good balance |
+| 120 | Wide terminals | Sharp, features visible |
+| 200 | Maximum detail | Near-photographic |
+
+### Width 40
+![width 40](width_40.png)
+
+### Width 80 (default)
+![width 80](width_80.png)
+
+### Width 120
+![width 120](width_120.png)
+
+### Width 200
+![width 200](width_200.png)
+
+**Rule of thumb:** match `width` to where the output will be displayed. Terminal? Use 80-120. Discord message? Use 40-60. Saving to a file? Go big with 160-200.
 
 ## License
 

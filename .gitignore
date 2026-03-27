@@ -177,3 +177,5 @@ docs/
 *.jpeg
 !ascii_preview.png
 !ascii_logo_preview.png
+!charset_*.png
+!width_*.png
