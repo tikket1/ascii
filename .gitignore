@@ -157,7 +157,23 @@ Temporary Items
 *.tmp
 *.temp
 
-# Old project directories
-FUNr/venv/
-FUNr/ascii_env/
-FUNr/__pycache__/
+# Legacy project files (pre-MCP)
+FUNr/
+tikket.tech/
+app.py
+demo.py
+debug_*.py
+tikket_ascii.py
+setup.sh
+requirements.txt
+templates/
+Procfile
+gunicorn.conf.py
+vercel.json
+GITHUB_READY.md
+docs/
+*.png
+*.jpg
+*.jpeg
+!ascii_preview.png
+!ascii_logo_preview.png

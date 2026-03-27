@@ -1,12 +1,5 @@
 """
 ASCII Art Engine — Image to ASCII converter with photo and logo modes.
-
-Refactored from tikket_ascii.py with fixes for:
-- Configurable space fill (░ vs real spaces)
-- Alpha channel awareness
-- Whitespace trimming for logos
-- Auto-invert for light-background logos
-- Bundled processing presets per mode
 """
 
 import numpy as np
