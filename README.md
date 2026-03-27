@@ -18,19 +18,15 @@ Two modes — **photo** and **logo** — with smart defaults for each.
 
 ![Logo mode — horse silhouette as ASCII art](ascii_logo_preview.png)
 
-## Install
+## Quick Start
+
+Works out of the box as an MCP server — install it, add it to your config, done.
 
 ```bash
-# With uvx (recommended)
-uvx ascii-art-mcp
-
-# Or pip
 pip install ascii-art-mcp
 ```
 
-## Usage with Claude Code
-
-Add to your Claude Code settings:
+Add to your Claude Code settings (`~/.claude/settings.json`):
 
 ```json
 {
@@ -43,10 +39,14 @@ Add to your Claude Code settings:
 }
 ```
 
-Then ask Claude to convert images:
+That's it. The server starts automatically when Claude Code launches, advertises its tools (`convert_image`, `list_charsets`), and handles requests over stdio. No API keys, no configuration, no hosting.
+
+Then just ask:
 
 > "Convert this screenshot to ASCII art in logo mode"
 > "Turn my profile photo into colored ASCII art"
+
+Works with any MCP-compatible client (Claude Code, Cursor, etc.).
 
 ## Tools
 
