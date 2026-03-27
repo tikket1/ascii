@@ -23,11 +23,7 @@ dependencies = [
     "mcp[cli]>=1.0.0",
     "Pillow>=9.0.0",
     "numpy>=1.21.0",
-    "scipy>=1.7.0",
 ]
-
-[project.optional-dependencies]
-hifi = ["scikit-image>=0.19.0"]
 
 [project.scripts]
 ascii-art-mcp = "ascii_art_mcp.server:main"

@@ -28,12 +28,6 @@ uvx ascii-art-mcp
 pip install ascii-art-mcp
 ```
 
-For enhanced photo processing (adaptive histogram equalization):
-
-```bash
-pip install ascii-art-mcp[hifi]
-```
-
 ## Usage with Claude Code
 
 Add to your Claude Code settings:
@@ -67,7 +61,6 @@ Convert an image to ASCII art.
 | `width` | int | no | 80 | Output width (20-200 chars) |
 | `charset` | string | no | auto | Character set (run `list_charsets`) |
 | `color` | bool | no | false | ANSI 256-color output |
-| `color_style` | string | no | natural | Palette: natural, vivid, ocean, sunset |
 | `invert` | bool | no | auto | Flip brightness mapping |
 
 **Photo mode** — optimized for photographs: hi-fi processing with shadow lifting, sharpening, gamma correction. Fills empty space with `░` for visibility in terminals/chat.

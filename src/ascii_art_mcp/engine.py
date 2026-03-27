@@ -11,14 +11,7 @@ Refactored from tikket_ascii.py with fixes for:
 
 import numpy as np
 from PIL import Image, ImageEnhance, ImageFilter
-from scipy import ndimage
-from typing import List, Tuple, Optional
-
-try:
-    from skimage import exposure
-    SCIKIT_AVAILABLE = True
-except ImportError:
-    SCIKIT_AVAILABLE = False
+from typing import Tuple, Optional
 
 
 CHAR_SETS = {
@@ -41,25 +34,6 @@ CHARSET_INFO = {
     "hifi": {"description": "Repeated chars for fine gradation", "recommended_for": "photo"},
     "dense": {"description": "Heavy block shading, bold look", "recommended_for": "logo"},
     "ultra": {"description": "Repeated ASCII chars, balanced gradation", "recommended_for": "both"},
-}
-
-COLOR_PALETTES = {
-    "natural": [
-        (25, 25, 25), (100, 50, 30), (150, 120, 80), (200, 180, 150),
-        (50, 100, 150), (100, 150, 100), (200, 200, 200), (255, 220, 180),
-    ],
-    "vivid": [
-        (0, 0, 0), (255, 0, 0), (0, 255, 0), (0, 0, 255),
-        (255, 255, 0), (255, 0, 255), (0, 255, 255), (255, 255, 255),
-    ],
-    "ocean": [
-        (0, 20, 40), (20, 50, 80), (40, 80, 120), (60, 120, 160),
-        (100, 150, 180), (150, 200, 220), (200, 230, 250), (255, 255, 255),
-    ],
-    "sunset": [
-        (20, 0, 40), (60, 20, 80), (120, 40, 60), (180, 80, 40),
-        (220, 120, 60), (250, 180, 100), (255, 220, 150), (255, 255, 200),
-    ],
 }
 
 # Mode presets bundle all the processing settings
@@ -174,27 +148,12 @@ def _gentle_shadow_lift(pixels: np.ndarray, threshold: float = 0.2, strength: fl
     return np.clip(lifted, 0, 1) * 255.0
 
 
-def _adaptive_histogram_eq(img_array: np.ndarray, clip_limit: float = 0.02) -> np.ndarray:
-    if SCIKIT_AVAILABLE:
-        normalized = img_array / 255.0
-        enhanced = exposure.equalize_adapthist(normalized, clip_limit=clip_limit)
-        return (enhanced * 255).astype(np.uint8)
-    # Fallback: simple local contrast
-    local_std = ndimage.generic_filter(img_array.astype(np.float64), np.std, size=5)
-    max_std = local_std.max()
-    if max_std == 0:
-        return img_array
-    factor = 1.0 + (0.3 * (1.0 - local_std / max_std))
-    return np.clip(img_array.astype(np.float64) * factor, 0, 255).astype(np.uint8)
-
-
 def convert(
     image_path: str,
     mode: str = "photo",
     width: int = 80,
     charset: Optional[str] = None,
     color: bool = False,
-    color_style: str = "natural",
     invert: Optional[bool] = None,
 ) -> str:
     """Convert an image to ASCII art.
@@ -205,7 +164,6 @@ def convert(
         width: Output width in characters.
         charset: Character set name. If None, uses mode default.
         color: Enable ANSI 256-color output.
-        color_style: Color palette name.
         invert: Flip brightness mapping. None = use mode default (auto for logo).
 
     Returns:
@@ -263,7 +221,7 @@ def convert(
 
     # Resize maintaining aspect ratio
     aspect_ratio = gray.height / gray.width
-    new_height = int(width * aspect_ratio * 0.55)
+    new_height = max(1, int(width * aspect_ratio * 0.55))
     resample = Image.Resampling.LANCZOS if hifi else Image.Resampling.BILINEAR
     gray = gray.resize((width, new_height), resample)
 

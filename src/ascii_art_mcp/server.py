@@ -4,7 +4,7 @@ ASCII Art MCP Server — Expose image-to-ASCII conversion as MCP tools.
 
 import os
 from mcp.server.fastmcp import FastMCP
-from ascii_art_mcp.engine import convert, CHAR_SETS, CHARSET_INFO, COLOR_PALETTES
+from ascii_art_mcp.engine import convert, CHAR_SETS, CHARSET_INFO
 
 mcp = FastMCP(
     "ascii-art",
@@ -19,7 +19,6 @@ def convert_image(
     width: int = 80,
     charset: str | None = None,
     color: bool = False,
-    color_style: str = "natural",
     invert: bool | None = None,
 ) -> str:
     """Convert an image to ASCII art.
@@ -32,7 +31,6 @@ def convert_image(
         width: Output width in characters. Default 80. Range 20-200.
         charset: Character set to use. Run list_charsets to see options. If omitted, uses mode default.
         color: Enable ANSI 256-color output. Best viewed in terminals that support it.
-        color_style: Color palette — "natural", "vivid", "ocean", or "sunset".
         invert: Flip brightness mapping. In logo mode, this auto-detects if not specified.
 
     Returns:
@@ -49,17 +47,12 @@ def convert_image(
         available = ", ".join(CHAR_SETS.keys())
         raise ValueError(f"Unknown charset '{charset}'. Available: {available}")
 
-    if color_style not in COLOR_PALETTES:
-        available = ", ".join(COLOR_PALETTES.keys())
-        raise ValueError(f"Unknown color_style '{color_style}'. Available: {available}")
-
     return convert(
         image_path=image_path,
         mode=mode,
         width=width,
         charset=charset,
         color=color,
-        color_style=color_style,
         invert=invert,
     )
 
@@ -74,7 +67,6 @@ def list_charsets() -> list[dict]:
     result = []
     for name, chars in CHAR_SETS.items():
         info = CHARSET_INFO.get(name, {})
-        # Show unique chars for display
         unique = "".join(dict.fromkeys(chars))
         result.append({
             "name": name,
